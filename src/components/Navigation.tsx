@@ -50,6 +50,11 @@ const Navigation = () => {
 
         {/* Right Actions */}
         <div className="flex items-center gap-4">
+          <Link to="/wholesale">
+            <Button variant="default" className="hidden md:inline-flex bg-accent hover:bg-accent/90 text-accent-foreground font-semibold">
+              Global Supply Here
+            </Button>
+          </Link>
           <Cart />
 
           {/* Mobile Menu Toggle */}
