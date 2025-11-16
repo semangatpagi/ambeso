@@ -27,7 +27,8 @@ const Hero = () => {
           <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight">
             Premium Coffee
             <br />
-            <span className="text-secondary">From Indonesia</span>
+            <span className="text-white" style={{ WebkitTextStroke: '1px hsl(0, 84%, 60%)' }}>From </span>
+            <span className="text-destructive" style={{ WebkitTextStroke: '1px white' }}>Indonesia</span>
           </h1>
 
           {/* Subtitle */}
