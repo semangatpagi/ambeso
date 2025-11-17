@@ -8,49 +8,49 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* White-dominant with Ambeso corporate color */
-    --background: 0 0% 100%;
-    --foreground: 168 100% 12%;
+    /* Coffee-inspired premium palette */
+    --background: 25 20% 8%;
+    --foreground: 35 25% 95%;
 
-    --card: 0 0% 98%;
-    --card-foreground: 168 100% 12%;
+    --card: 25 15% 12%;
+    --card-foreground: 35 25% 95%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 168 100% 12%;
+    --popover: 25 18% 10%;
+    --popover-foreground: 35 25% 95%;
 
-    /* Ambeso corporate green #003f32 */
-    --primary: 168 100% 12%;
-    --primary-foreground: 0 0% 100%;
+    /* Rich coffee brown */
+    --primary: 25 45% 25%;
+    --primary-foreground: 35 30% 98%;
 
-    /* Light green accent */
-    --secondary: 168 45% 92%;
-    --secondary-foreground: 168 100% 12%;
+    /* Warm amber accent */
+    --secondary: 35 85% 60%;
+    --secondary-foreground: 25 40% 10%;
 
-    --muted: 168 15% 96%;
-    --muted-foreground: 168 25% 45%;
+    --muted: 25 15% 18%;
+    --muted-foreground: 35 15% 65%;
 
-    /* Accent for CTAs */
-    --accent: 168 85% 35%;
-    --accent-foreground: 0 0% 100%;
+    /* Golden accent for CTAs */
+    --accent: 38 90% 55%;
+    --accent-foreground: 25 40% 10%;
 
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 100%;
+    --destructive-foreground: 35 30% 98%;
 
-    --border: 168 20% 88%;
-    --input: 168 20% 88%;
-    --ring: 168 100% 12%;
+    --border: 25 20% 20%;
+    --input: 25 20% 20%;
+    --ring: 38 90% 55%;
 
     --radius: 1rem;
 
-    /* Glass effect variables for white theme */
-    --glass-bg: 0 0% 100% / 0.85;
-    --glass-border: 168 100% 12% / 0.15;
-    --glass-shadow: 0 8px 32px 0 rgb(0 63 50 / 0.12);
+    /* Glass effect variables */
+    --glass-bg: 35 25% 95% / 0.08;
+    --glass-border: 35 25% 95% / 0.15;
+    --glass-shadow: 0 8px 32px 0 rgb(0 0 0 / 0.37);
     
     /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(168 100% 12%) 0%, hsl(168 85% 18%) 100%);
-    --gradient-accent: linear-gradient(135deg, hsl(168 85% 35%) 0%, hsl(168 70% 45%) 100%);
-    --gradient-glass: linear-gradient(135deg, rgba(255 255 255 / 0.9) 0%, rgba(255 255 255 / 0.7) 100%);
+    --gradient-primary: linear-gradient(135deg, hsl(25 45% 25%) 0%, hsl(25 35% 18%) 100%);
+    --gradient-accent: linear-gradient(135deg, hsl(38 90% 55%) 0%, hsl(35 85% 60%) 100%);
+    --gradient-glass: linear-gradient(135deg, rgba(255 255 255 / 0.1) 0%, rgba(255 255 255 / 0.05) 100%);
     
     /* Smooth transitions */
     --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -68,21 +68,21 @@ All colors MUST be HSL.
     font-feature-settings: "rlig" 1, "calt" 1;
   }
   
-  /* Glass morphism utilities for white theme */
+  /* Glass morphism utilities */
   .glass {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.7) 100%);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(0, 63, 50, 0.15);
-    box-shadow: 0 8px 32px 0 rgba(0, 63, 50, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
   }
   
   .glass-strong {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.85) 100%);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.08) 100%);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(0, 63, 50, 0.2);
-    box-shadow: 0 8px 32px 0 rgba(0, 63, 50, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.45);
   }
   
   /* Smooth scrolling */

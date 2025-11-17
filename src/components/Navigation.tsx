@@ -1,8 +1,6 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Menu, X } from "lucide-react";
-import Cart from "@/components/Cart";
-import { Link } from "react-router-dom";
+import { ShoppingCart, Menu, X } from "lucide-react";
 
 const Navigation = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -17,9 +15,10 @@ const Navigation = () => {
   }, []);
 
   const navLinks = [
-    { label: "Store", href: "/products" },
-    { label: "Projects", href: "/projects" },
-    { label: "Blog", href: "/blog" },
+    { label: "Store", href: "#store" },
+    { label: "Wholesale", href: "#wholesale" },
+    { label: "Projects", href: "#projects" },
+    { label: "Blog", href: "#blog" },
     { label: "About", href: "#about" },
   ];
 
@@ -31,31 +30,28 @@ const Navigation = () => {
     >
       <div className="container mx-auto px-4 flex items-center justify-between">
         {/* Logo */}
-        <Link to="/" className="text-2xl font-bold text-foreground tracking-tight hover:text-accent transition-colors">
+        <a href="/" className="text-2xl font-bold text-foreground tracking-tight hover:text-accent transition-colors">
           AMBESO
-        </Link>
+        </a>
 
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center gap-8">
           {navLinks.map((link) => (
-            <Link
+            <a
               key={link.label}
-              to={link.href}
+              href={link.href}
               className="text-sm font-medium text-foreground/80 hover:text-accent transition-colors"
             >
               {link.label}
-            </Link>
+            </a>
           ))}
         </div>
 
         {/* Right Actions */}
         <div className="flex items-center gap-4">
-          <Link to="/wholesale">
-            <Button variant="default" className="hidden md:inline-flex bg-accent hover:bg-accent/90 text-accent-foreground font-semibold">
-              Global Supply Here
-            </Button>
-          </Link>
-          <Cart />
+          <Button variant="ghost" size="icon" className="text-foreground hover:text-accent">
+            <ShoppingCart className="h-5 w-5" />
+          </Button>
 
           {/* Mobile Menu Toggle */}
           <Button
@@ -74,14 +70,14 @@ const Navigation = () => {
         <div className="md:hidden glass-strong mt-4 mx-4 rounded-2xl p-6 animate-fade-in">
           <div className="flex flex-col gap-4">
             {navLinks.map((link) => (
-              <Link
+              <a
                 key={link.label}
-                to={link.href}
+                href={link.href}
                 className="text-base font-medium text-foreground/80 hover:text-accent transition-colors py-2"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 {link.label}
-              </Link>
+              </a>
             ))}
           </div>
         </div>
