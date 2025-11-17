@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { ShoppingCart } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const FeaturedProducts = () => {
   const products = [
@@ -81,13 +82,15 @@ const FeaturedProducts = () => {
 
         {/* View All Button */}
         <div className="text-center mt-12">
-          <Button
-            size="lg"
-            variant="outline"
-            className="glass border-foreground/20 hover:border-accent text-foreground hover:text-accent font-semibold px-8 py-6 rounded-full"
-          >
-            View All Products
-          </Button>
+          <Link to="/store">
+            <Button
+              size="lg"
+              variant="outline"
+              className="glass border-foreground/20 hover:border-accent text-foreground hover:text-accent font-semibold px-8 py-6 rounded-full"
+            >
+              View All Products
+            </Button>
+          </Link>
         </div>
       </div>
     </section>
