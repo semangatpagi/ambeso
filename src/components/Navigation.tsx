@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { ShoppingCart, Menu, X } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Navigation = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -15,11 +16,11 @@ const Navigation = () => {
   }, []);
 
   const navLinks = [
-    { label: "Store", href: "#store" },
-    { label: "Wholesale", href: "#wholesale" },
-    { label: "Projects", href: "#projects" },
-    { label: "Blog", href: "#blog" },
-    { label: "About", href: "#about" },
+    { label: "Store", href: "/store", isRoute: true },
+    { label: "Wholesale", href: "#wholesale", isRoute: false },
+    { label: "Projects", href: "#projects", isRoute: false },
+    { label: "Blog", href: "#blog", isRoute: false },
+    { label: "About", href: "#about", isRoute: false },
   ];
 
   return (
@@ -30,21 +31,31 @@ const Navigation = () => {
     >
       <div className="container mx-auto px-4 flex items-center justify-between">
         {/* Logo */}
-        <a href="/" className="text-2xl font-bold text-foreground tracking-tight hover:text-accent transition-colors">
+        <Link to="/" className="text-2xl font-bold text-foreground tracking-tight hover:text-accent transition-colors">
           AMBESO
-        </a>
+        </Link>
 
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center gap-8">
-          {navLinks.map((link) => (
-            <a
-              key={link.label}
-              href={link.href}
-              className="text-sm font-medium text-foreground/80 hover:text-accent transition-colors"
-            >
-              {link.label}
-            </a>
-          ))}
+          {navLinks.map((link) =>
+            link.isRoute ? (
+              <Link
+                key={link.label}
+                to={link.href}
+                className="text-sm font-medium text-foreground/80 hover:text-accent transition-colors"
+              >
+                {link.label}
+              </Link>
+            ) : (
+              <a
+                key={link.label}
+                href={link.href}
+                className="text-sm font-medium text-foreground/80 hover:text-accent transition-colors"
+              >
+                {link.label}
+              </a>
+            )
+          )}
         </div>
 
         {/* Right Actions */}
@@ -69,16 +80,27 @@ const Navigation = () => {
       {isMobileMenuOpen && (
         <div className="md:hidden glass-strong mt-4 mx-4 rounded-2xl p-6 animate-fade-in">
           <div className="flex flex-col gap-4">
-            {navLinks.map((link) => (
-              <a
-                key={link.label}
-                href={link.href}
-                className="text-base font-medium text-foreground/80 hover:text-accent transition-colors py-2"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                {link.label}
-              </a>
-            ))}
+            {navLinks.map((link) =>
+              link.isRoute ? (
+                <Link
+                  key={link.label}
+                  to={link.href}
+                  className="text-base font-medium text-foreground/80 hover:text-accent transition-colors py-2"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  {link.label}
+                </Link>
+              ) : (
+                <a
+                  key={link.label}
+                  href={link.href}
+                  className="text-base font-medium text-foreground/80 hover:text-accent transition-colors py-2"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  {link.label}
+                </a>
+              )
+            )}
           </div>
         </div>
       )}
