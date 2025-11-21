@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Coffee, Timer, Sparkles } from "lucide-react";
-import dripenImage from "@/assets/dripen-product.jpg";
+import dripenImage from "@/assets/dripen-product.png";
 
 const DripenSection = () => {
   const features = [
