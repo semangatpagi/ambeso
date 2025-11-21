@@ -18,10 +18,10 @@ const Navigation = () => {
 
   const navLinks = [
     { label: "Store", href: "/store", isRoute: true },
-    { label: "Wholesale", href: "#wholesale", isRoute: false },
+    { label: "About", href: "/about", isRoute: true },
+    { label: "Blog", href: "/blog", isRoute: true },
     { label: "Projects", href: "#projects", isRoute: false },
-    { label: "Blog", href: "#blog", isRoute: false },
-    { label: "About", href: "#about", isRoute: false },
+    { label: "Charity", href: "#charity", isRoute: false },
   ];
 
   return (
