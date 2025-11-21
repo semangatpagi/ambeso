@@ -1,13 +1,14 @@
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { MapPin, Users, Award, Leaf } from "lucide-react";
+import founderImage from "@/assets/muhammad-idham.jpg";
 
 const About = () => {
   const teamMembers = [
     {
-      name: "Ahmad Rizki",
-      role: "Founder & Master Roaster",
-      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop"
+      name: "Muhammad Idham",
+      role: "Founder",
+      image: founderImage
     },
     {
       name: "Siti Nurhaliza",
