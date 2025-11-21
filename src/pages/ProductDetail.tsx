@@ -9,6 +9,7 @@ import { ArrowLeft, ShoppingCart, Heart, Package, Flame, Coffee } from "lucide-r
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { useToast } from "@/hooks/use-toast";
+import { useCart } from "@/contexts/CartContext";
 
 interface Product {
   id: string;
@@ -24,11 +25,13 @@ interface Product {
   tasting_notes: string[];
   in_stock: boolean;
   featured: boolean;
+  created_at: string;
 }
 
 const ProductDetail = () => {
   const { slug } = useParams();
   const { toast } = useToast();
+  const { addItem } = useCart();
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
@@ -64,10 +67,15 @@ const ProductDetail = () => {
   };
 
   const handleAddToCart = () => {
-    toast({
-      title: "Added to cart",
-      description: `${quantity}x ${product?.name} added to your cart.`,
-    });
+    if (product) {
+      for (let i = 0; i < quantity; i++) {
+        addItem(product);
+      }
+      toast({
+        title: "Added to cart",
+        description: `${quantity}x ${product.name} added to your cart.`,
+      });
+    }
   };
 
   const roastLevelLabel = {
