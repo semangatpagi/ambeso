@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Heart, Users, Leaf } from "lucide-react";
-import farmImage from "@/assets/farm-story.jpg";
+import farmImage from "@/assets/farm-story.png";
 
 const BrandStory = () => {
   const values = [
