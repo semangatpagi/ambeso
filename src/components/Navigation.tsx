@@ -1,12 +1,16 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Menu, X } from "lucide-react";
+import { Menu, X, User } from "lucide-react";
 import { Link } from "react-router-dom";
 import { CartSheet } from "./CartSheet";
+import { supabase } from "@/integrations/supabase/client";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 const Navigation = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [user, setUser] = useState<any>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -15,6 +19,43 @@ const Navigation = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  useEffect(() => {
+    checkUser();
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user || null);
+      if (session?.user) {
+        checkAdminRole(session.user.id);
+      } else {
+        setIsAdmin(false);
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const checkUser = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    setUser(session?.user || null);
+    if (session?.user) {
+      checkAdminRole(session.user.id);
+    }
+  };
+
+  const checkAdminRole = async (userId: string) => {
+    const { data } = await supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", userId)
+      .eq("role", "admin")
+      .maybeSingle();
+    setIsAdmin(!!data);
+  };
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    setUser(null);
+    setIsAdmin(false);
+  };
 
   const navLinks = [
     { label: "Store", href: "/store", isRoute: true },
@@ -61,6 +102,32 @@ const Navigation = () => {
 
         {/* Right Actions */}
         <div className="flex items-center gap-4">
+          {user ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon">
+                  <User className="h-5 w-5" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                {isAdmin && (
+                  <DropdownMenuItem asChild>
+                    <Link to="/admin">Admin Dashboard</Link>
+                  </DropdownMenuItem>
+                )}
+                <DropdownMenuItem onClick={handleLogout}>
+                  Logout
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <Link to="/auth">
+              <Button variant="ghost" size="sm">
+                Login
+              </Button>
+            </Link>
+          )}
+          
           <CartSheet />
 
           {/* Mobile Menu Toggle */}
