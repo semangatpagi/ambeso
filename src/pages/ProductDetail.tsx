@@ -26,6 +26,12 @@ interface Product {
   in_stock: boolean;
   featured: boolean;
   created_at: string;
+  acidity_level: string | null;
+  body_level: string | null;
+  altitude_m: number | null;
+  variety: string | null;
+  processing_method: string | null;
+  flavor_profile: string[] | null;
 }
 
 const ProductDetail = () => {
