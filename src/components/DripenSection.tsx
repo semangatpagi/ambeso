@@ -89,7 +89,7 @@ const DripenSection = () => {
           <div className="relative order-1 lg:order-2 animate-scale-in">
             <div className="relative">
               {/* Floating Elements */}
-              <div className="absolute -top-8 -right-8 glass-strong rounded-3xl p-6 animate-float">
+              <div className="absolute -top-8 -left-8 glass-strong rounded-3xl p-6 animate-float">
                 <div className="text-3xl font-bold text-accent">99%</div>
                 <div className="text-xs text-foreground/70">Customer Rating</div>
               </div>
