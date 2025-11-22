@@ -11,10 +11,10 @@ const Footer = () => {
   };
 
   const socialLinks = [
-    { icon: Facebook, href: "#" },
-    { icon: Instagram, href: "#" },
-    { icon: Twitter, href: "#" },
-    { icon: Mail, href: "#" },
+    { icon: Facebook, href: "https://www.facebook.com/AmbesoCoffeeshop/" },
+    { icon: Instagram, href: "https://www.instagram.com/ambesocoffeeshop/" },
+    { icon: Twitter, href: "https://x.com/ambesocoffee" },
+    { icon: Mail, href: "mailto:ambesocoffeeshop@gmail.com" },
   ];
 
   return (
