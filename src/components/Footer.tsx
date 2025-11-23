@@ -51,7 +51,7 @@ const Footer = () => {
           <div className="md:col-span-1">
             <h2 className="text-3xl font-bold mb-4">AMBESO</h2>
             <p className="text-foreground/70 text-sm mb-6">
-              Premium Sulawesi coffee, crafted with passion and tradition.
+              Jln. Anggrek Raya No. 23, Kel. Paropo, Kec. Panakkukang, Kota Makassar, Sulawesi Selatan, Indonesia
             </p>
             {/* Social Links */}
             <div className="flex gap-3">
