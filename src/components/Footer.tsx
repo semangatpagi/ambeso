@@ -1,4 +1,4 @@
-import { Facebook, Instagram, Twitter, Mail, MessageCircle } from "lucide-react";
+import { Facebook, Instagram, Twitter, Mail, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -14,7 +14,7 @@ const Footer = () => {
     { icon: Facebook, href: "https://www.facebook.com/AmbesoCoffeeshop/" },
     { icon: Instagram, href: "https://www.instagram.com/ambesocoffeeshop/" },
     { icon: Twitter, href: "https://x.com/ambesocoffee" },
-    { icon: MessageCircle, href: "https://wa.me/628114291919" },
+    { icon: Phone, href: "https://wa.me/628114291919" },
     { icon: Mail, href: "mailto:idham@supplierlokal.com" },
   ];
 
