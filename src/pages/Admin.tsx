@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { OrdersManagement } from "@/components/admin/OrdersManagement";
 import { UsersManagement } from "@/components/admin/UsersManagement";
 import { ProductsManagement } from "@/components/admin/ProductsManagement";
+import { CategoriesManagement } from "@/components/admin/CategoriesManagement";
 import { Loader2 } from "lucide-react";
 
 const Admin = () => {
@@ -71,10 +72,11 @@ const Admin = () => {
         </div>
 
         <Tabs defaultValue="orders" className="w-full">
-          <TabsList className="grid w-full grid-cols-3 mb-8">
+          <TabsList className="grid w-full grid-cols-4 mb-8">
             <TabsTrigger value="orders">Orders</TabsTrigger>
             <TabsTrigger value="users">Users</TabsTrigger>
             <TabsTrigger value="products">Products</TabsTrigger>
+            <TabsTrigger value="categories">Kategori</TabsTrigger>
           </TabsList>
 
           <TabsContent value="orders">
@@ -87,6 +89,10 @@ const Admin = () => {
 
           <TabsContent value="products">
             <ProductsManagement />
+          </TabsContent>
+
+          <TabsContent value="categories">
+            <CategoriesManagement />
           </TabsContent>
         </Tabs>
       </main>

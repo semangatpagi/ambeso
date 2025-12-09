@@ -32,6 +32,7 @@ interface Product {
   variety: string | null;
   processing_method: string | null;
   flavor_profile: string[] | null;
+  category_id: string | null;
 }
 
 const ProductDetail = () => {

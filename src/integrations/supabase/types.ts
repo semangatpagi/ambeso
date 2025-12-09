@@ -14,6 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
+      categories: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          slug: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          slug: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          slug?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       order_items: {
         Row: {
           created_at: string
@@ -109,6 +136,7 @@ export type Database = {
           acidity_level: string | null
           altitude_m: number | null
           body_level: string | null
+          category_id: string | null
           created_at: string
           description: string
           featured: boolean
@@ -131,6 +159,7 @@ export type Database = {
           acidity_level?: string | null
           altitude_m?: number | null
           body_level?: string | null
+          category_id?: string | null
           created_at?: string
           description: string
           featured?: boolean
@@ -153,6 +182,7 @@ export type Database = {
           acidity_level?: string | null
           altitude_m?: number | null
           body_level?: string | null
+          category_id?: string | null
           created_at?: string
           description?: string
           featured?: boolean
@@ -171,7 +201,15 @@ export type Database = {
           variety?: string | null
           weight_g?: number
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "products_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
