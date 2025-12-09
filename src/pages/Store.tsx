@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ShoppingCart, Filter } from "lucide-react";
+import { ShoppingCart, Filter, Coffee, Package } from "lucide-react";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 
@@ -23,33 +23,54 @@ interface Product {
   tasting_notes: string[];
   in_stock: boolean;
   featured: boolean;
+  is_coffee: boolean;
+  product_type: string;
 }
+
+const PRODUCT_TYPE_LABELS: Record<string, string> = {
+  green_bean: "Green Bean",
+  roasted_coffee: "Roasted Coffee",
+  ground_coffee: "Ground Coffee",
+  dripen: "DRIPEN",
+  capsule: "Capsule",
+  others: "Others",
+  non_coffee: "Non-Coffee",
+};
 
 const Store = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   
+  const categoryFilter = searchParams.get("category") || "all";
+  const typeFilter = searchParams.get("type") || "all";
   const originFilter = searchParams.get("origin") || "all";
   const roastFilter = searchParams.get("roast") || "all";
-  const grindFilter = searchParams.get("grind") || "all";
 
   useEffect(() => {
     fetchProducts();
-  }, [originFilter, roastFilter, grindFilter]);
+  }, [categoryFilter, typeFilter, originFilter, roastFilter]);
 
   const fetchProducts = async () => {
     setLoading(true);
     let query = supabase.from("products").select("*").eq("in_stock", true);
 
+    if (categoryFilter === "coffee") {
+      query = query.eq("is_coffee", true);
+    } else if (categoryFilter === "non-coffee") {
+      query = query.eq("is_coffee", false);
+    }
+
+    if (typeFilter !== "all") {
+      query = query.eq("product_type", typeFilter);
+    }
+
     if (originFilter !== "all") {
       query = query.eq("origin", originFilter);
     }
+
     if (roastFilter !== "all") {
       query = query.eq("roast_level", roastFilter);
-    }
-    if (grindFilter !== "all") {
-      query = query.eq("grind_type", grindFilter);
     }
 
     const { data, error } = await query.order("featured", { ascending: false });
@@ -80,6 +101,8 @@ const Store = () => {
     }).format(price);
   };
 
+  const showCoffeeFilters = categoryFilter !== "non-coffee";
+
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
@@ -87,9 +110,9 @@ const Store = () => {
       <main className="container mx-auto px-4 pt-32 pb-20">
         {/* Header */}
         <div className="text-center mb-12 animate-fade-in">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Our Coffee Collection</h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">Our Collection</h1>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Discover premium coffee from the highlands of Sulawesi
+            Discover premium products from Ambeso
           </p>
         </div>
 
@@ -100,52 +123,73 @@ const Store = () => {
             <h2 className="font-semibold">Filter Products</h2>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div>
-              <label className="text-sm text-muted-foreground mb-2 block">Origin</label>
-              <Select value={originFilter} onValueChange={(v) => updateFilter("origin", v)}>
+              <label className="text-sm text-muted-foreground mb-2 block">Kategori</label>
+              <Select value={categoryFilter} onValueChange={(v) => updateFilter("category", v)}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Origins</SelectItem>
-                  <SelectItem value="Toraja">Toraja</SelectItem>
-                  <SelectItem value="Gayo">Gayo</SelectItem>
-                  <SelectItem value="Mandheling">Mandheling</SelectItem>
-                  <SelectItem value="Sulawesi Blend">Sulawesi Blend</SelectItem>
+                  <SelectItem value="all">Semua Produk</SelectItem>
+                  <SelectItem value="coffee">Produk Kopi</SelectItem>
+                  <SelectItem value="non-coffee">Produk Non-Kopi</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
-            <div>
-              <label className="text-sm text-muted-foreground mb-2 block">Roast Level</label>
-              <Select value={roastFilter} onValueChange={(v) => updateFilter("roast", v)}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Roasts</SelectItem>
-                  <SelectItem value="light">Light</SelectItem>
-                  <SelectItem value="medium">Medium</SelectItem>
-                  <SelectItem value="dark">Dark</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+            {showCoffeeFilters && (
+              <>
+                <div>
+                  <label className="text-sm text-muted-foreground mb-2 block">Tipe Produk</label>
+                  <Select value={typeFilter} onValueChange={(v) => updateFilter("type", v)}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Semua Tipe</SelectItem>
+                      <SelectItem value="green_bean">Green Bean</SelectItem>
+                      <SelectItem value="roasted_coffee">Roasted Coffee</SelectItem>
+                      <SelectItem value="ground_coffee">Ground Coffee</SelectItem>
+                      <SelectItem value="dripen">DRIPEN</SelectItem>
+                      <SelectItem value="capsule">Capsule</SelectItem>
+                      <SelectItem value="others">Others</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
 
-            <div>
-              <label className="text-sm text-muted-foreground mb-2 block">Grind Type</label>
-              <Select value={grindFilter} onValueChange={(v) => updateFilter("grind", v)}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Types</SelectItem>
-                  <SelectItem value="whole-bean">Whole Bean</SelectItem>
-                  <SelectItem value="ground">Ground</SelectItem>
-                  <SelectItem value="drip-bag">Drip Bag</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+                <div>
+                  <label className="text-sm text-muted-foreground mb-2 block">Origin</label>
+                  <Select value={originFilter} onValueChange={(v) => updateFilter("origin", v)}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Origins</SelectItem>
+                      <SelectItem value="Toraja">Toraja</SelectItem>
+                      <SelectItem value="Gayo">Gayo</SelectItem>
+                      <SelectItem value="Mandheling">Mandheling</SelectItem>
+                      <SelectItem value="Sulawesi Blend">Sulawesi Blend</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <label className="text-sm text-muted-foreground mb-2 block">Roast Level</label>
+                  <Select value={roastFilter} onValueChange={(v) => updateFilter("roast", v)}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Roasts</SelectItem>
+                      <SelectItem value="Light">Light</SelectItem>
+                      <SelectItem value="Medium">Medium</SelectItem>
+                      <SelectItem value="Dark">Dark</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </>
+            )}
           </div>
         </div>
 
@@ -188,14 +232,23 @@ const Store = () => {
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-muted-foreground">
-                      No Image
+                      {product.is_coffee ? (
+                        <Coffee className="w-16 h-16" />
+                      ) : (
+                        <Package className="w-16 h-16" />
+                      )}
                     </div>
                   )}
-                  {product.featured && (
-                    <Badge className="absolute top-4 right-4 bg-accent text-accent-foreground">
-                      Featured
+                  <div className="absolute top-4 right-4 flex flex-col gap-2">
+                    {product.featured && (
+                      <Badge className="bg-accent text-accent-foreground">
+                        Featured
+                      </Badge>
+                    )}
+                    <Badge variant="secondary">
+                      {PRODUCT_TYPE_LABELS[product.product_type] || product.product_type}
                     </Badge>
-                  )}
+                  </div>
                 </div>
                 
                 <div className="p-6">
@@ -205,15 +258,19 @@ const Store = () => {
                     </h3>
                   </div>
                   
-                  <p className="text-sm text-muted-foreground mb-2">{product.origin}</p>
+                  {product.is_coffee && (
+                    <p className="text-sm text-muted-foreground mb-2">{product.origin}</p>
+                  )}
                   
-                  <div className="flex flex-wrap gap-1 mb-4">
-                    {product.tasting_notes.slice(0, 3).map((note) => (
-                      <Badge key={note} variant="secondary" className="text-xs">
-                        {note}
-                      </Badge>
-                    ))}
-                  </div>
+                  {product.is_coffee && product.tasting_notes && product.tasting_notes.length > 0 && (
+                    <div className="flex flex-wrap gap-1 mb-4">
+                      {product.tasting_notes.slice(0, 3).map((note) => (
+                        <Badge key={note} variant="secondary" className="text-xs">
+                          {note}
+                        </Badge>
+                      ))}
+                    </div>
+                  )}
                   
                   <p className="text-muted-foreground text-sm mb-4 line-clamp-2">
                     {product.description}

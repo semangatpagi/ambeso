@@ -33,6 +33,8 @@ interface Product {
   processing_method: string | null;
   flavor_profile: string[] | null;
   category_id: string | null;
+  product_type: string;
+  is_coffee: boolean;
 }
 
 const ProductDetail = () => {

@@ -145,10 +145,12 @@ export type Database = {
           id: string
           image_url: string | null
           in_stock: boolean
+          is_coffee: boolean
           name: string
           origin: string
           price: number
           processing_method: string | null
+          product_type: string
           roast_level: string
           slug: string
           tasting_notes: string[] | null
@@ -168,10 +170,12 @@ export type Database = {
           id?: string
           image_url?: string | null
           in_stock?: boolean
+          is_coffee?: boolean
           name: string
           origin: string
           price: number
           processing_method?: string | null
+          product_type?: string
           roast_level: string
           slug: string
           tasting_notes?: string[] | null
@@ -191,10 +195,12 @@ export type Database = {
           id?: string
           image_url?: string | null
           in_stock?: boolean
+          is_coffee?: boolean
           name?: string
           origin?: string
           price?: number
           processing_method?: string | null
+          product_type?: string
           roast_level?: string
           slug?: string
           tasting_notes?: string[] | null
@@ -234,6 +240,36 @@ export type Database = {
           full_name?: string | null
           id?: string
           phone?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      tracking_codes: {
+        Row: {
+          code_id: string
+          code_type: string
+          created_at: string
+          id: string
+          is_active: boolean
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          code_id: string
+          code_type: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          code_id?: string
+          code_type?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name?: string
           updated_at?: string
         }
         Relationships: []
