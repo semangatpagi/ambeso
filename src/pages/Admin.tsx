@@ -8,6 +8,7 @@ import { OrdersManagement } from "@/components/admin/OrdersManagement";
 import { UsersManagement } from "@/components/admin/UsersManagement";
 import { ProductsManagement } from "@/components/admin/ProductsManagement";
 import { CategoriesManagement } from "@/components/admin/CategoriesManagement";
+import { TrackingCodesManagement } from "@/components/admin/TrackingCodesManagement";
 import { Loader2 } from "lucide-react";
 
 const Admin = () => {
@@ -68,15 +69,16 @@ const Admin = () => {
       <main className="flex-1 container mx-auto px-4 py-8 mt-20">
         <div className="mb-8">
           <h1 className="text-4xl font-bold mb-2">Admin Dashboard</h1>
-          <p className="text-muted-foreground">Kelola orders, users, dan products</p>
+          <p className="text-muted-foreground">Kelola orders, users, products, dan tracking</p>
         </div>
 
         <Tabs defaultValue="orders" className="w-full">
-          <TabsList className="grid w-full grid-cols-4 mb-8">
+          <TabsList className="grid w-full grid-cols-5 mb-8">
             <TabsTrigger value="orders">Orders</TabsTrigger>
             <TabsTrigger value="users">Users</TabsTrigger>
             <TabsTrigger value="products">Products</TabsTrigger>
             <TabsTrigger value="categories">Kategori</TabsTrigger>
+            <TabsTrigger value="tracking">Tracking</TabsTrigger>
           </TabsList>
 
           <TabsContent value="orders">
@@ -93,6 +95,10 @@ const Admin = () => {
 
           <TabsContent value="categories">
             <CategoriesManagement />
+          </TabsContent>
+
+          <TabsContent value="tracking">
+            <TrackingCodesManagement />
           </TabsContent>
         </Tabs>
       </main>

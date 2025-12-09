@@ -3,10 +3,12 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { ProductForm } from "./ProductForm";
+import { CoffeeProductForm } from "./CoffeeProductForm";
+import { NonCoffeeProductForm } from "./NonCoffeeProductForm";
 import { toast } from "sonner";
-import { Loader2, Pencil, Trash2, Plus } from "lucide-react";
+import { Loader2, Pencil, Trash2, Plus, Coffee, Package } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
 
 type Product = {
   id: string;
@@ -15,6 +17,7 @@ type Product = {
   description: string;
   price: number;
   origin: string;
+  product_type: string;
   roast_level: string;
   grind_type: string;
   weight_g: number;
@@ -26,13 +29,25 @@ type Product = {
   image_url: string | null;
   in_stock: boolean;
   featured: boolean;
+  is_coffee: boolean;
+};
+
+const PRODUCT_TYPE_LABELS: Record<string, string> = {
+  green_bean: "Green Bean",
+  roasted_coffee: "Roasted Coffee",
+  ground_coffee: "Ground Coffee",
+  dripen: "DRIPEN",
+  capsule: "Capsule",
+  others: "Others",
+  non_coffee: "Non-Coffee",
 };
 
 export const ProductsManagement = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
-  const [dialogOpen, setDialogOpen] = useState(false);
+  const [coffeeDialogOpen, setCoffeeDialogOpen] = useState(false);
+  const [nonCoffeeDialogOpen, setNonCoffeeDialogOpen] = useState(false);
 
   useEffect(() => {
     fetchProducts();
@@ -73,16 +88,31 @@ export const ProductsManagement = () => {
 
   const handleEdit = (product: Product) => {
     setEditingProduct(product);
-    setDialogOpen(true);
+    if (product.is_coffee) {
+      setCoffeeDialogOpen(true);
+    } else {
+      setNonCoffeeDialogOpen(true);
+    }
   };
 
-  const handleAddNew = () => {
+  const handleAddCoffee = () => {
     setEditingProduct(null);
-    setDialogOpen(true);
+    setCoffeeDialogOpen(true);
   };
 
-  const handleSuccess = () => {
-    setDialogOpen(false);
+  const handleAddNonCoffee = () => {
+    setEditingProduct(null);
+    setNonCoffeeDialogOpen(true);
+  };
+
+  const handleCoffeeSuccess = () => {
+    setCoffeeDialogOpen(false);
+    setEditingProduct(null);
+    fetchProducts();
+  };
+
+  const handleNonCoffeeSuccess = () => {
+    setNonCoffeeDialogOpen(false);
     setEditingProduct(null);
     fetchProducts();
   };
@@ -97,27 +127,49 @@ export const ProductsManagement = () => {
 
   return (
     <Card>
-      <CardHeader className="flex flex-row items-center justify-between">
+      <CardHeader className="flex flex-row items-center justify-between flex-wrap gap-4">
         <CardTitle>Manajemen Products</CardTitle>
-        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-          <DialogTrigger asChild>
-            <Button onClick={handleAddNew}>
-              <Plus className="mr-2 h-4 w-4" />
-              Tambah Produk
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle>
-                {editingProduct ? "Edit Produk" : "Tambah Produk Baru"}
-              </DialogTitle>
-            </DialogHeader>
-            <ProductForm
-              product={editingProduct}
-              onSuccess={handleSuccess}
-            />
-          </DialogContent>
-        </Dialog>
+        <div className="flex gap-2">
+          <Dialog open={coffeeDialogOpen} onOpenChange={setCoffeeDialogOpen}>
+            <DialogTrigger asChild>
+              <Button onClick={handleAddCoffee}>
+                <Coffee className="mr-2 h-4 w-4" />
+                Tambah Produk Kopi
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+              <DialogHeader>
+                <DialogTitle>
+                  {editingProduct ? "Edit Produk Kopi" : "Tambah Produk Kopi"}
+                </DialogTitle>
+              </DialogHeader>
+              <CoffeeProductForm
+                product={editingProduct}
+                onSuccess={handleCoffeeSuccess}
+              />
+            </DialogContent>
+          </Dialog>
+
+          <Dialog open={nonCoffeeDialogOpen} onOpenChange={setNonCoffeeDialogOpen}>
+            <DialogTrigger asChild>
+              <Button variant="outline" onClick={handleAddNonCoffee}>
+                <Package className="mr-2 h-4 w-4" />
+                Tambah Produk Non Kopi
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+              <DialogHeader>
+                <DialogTitle>
+                  {editingProduct ? "Edit Produk Non Kopi" : "Tambah Produk Non Kopi"}
+                </DialogTitle>
+              </DialogHeader>
+              <NonCoffeeProductForm
+                product={editingProduct}
+                onSuccess={handleNonCoffeeSuccess}
+              />
+            </DialogContent>
+          </Dialog>
+        </div>
       </CardHeader>
       <CardContent>
         <div className="rounded-md border">
@@ -125,10 +177,9 @@ export const ProductsManagement = () => {
             <TableHeader>
               <TableRow>
                 <TableHead>Nama</TableHead>
+                <TableHead>Tipe</TableHead>
                 <TableHead>Origin</TableHead>
                 <TableHead>Harga</TableHead>
-                <TableHead>Varietas</TableHead>
-                <TableHead>Altitude</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Aksi</TableHead>
               </TableRow>
@@ -136,13 +187,27 @@ export const ProductsManagement = () => {
             <TableBody>
               {products.map((product) => (
                 <TableRow key={product.id}>
-                  <TableCell className="font-medium">{product.name}</TableCell>
-                  <TableCell>{product.origin}</TableCell>
-                  <TableCell>Rp {product.price.toLocaleString()}</TableCell>
-                  <TableCell>{product.variety || "-"}</TableCell>
-                  <TableCell>{product.altitude_m ? `${product.altitude_m}m` : "-"}</TableCell>
+                  <TableCell className="font-medium">
+                    <div className="flex items-center gap-2">
+                      {product.is_coffee ? (
+                        <Coffee className="h-4 w-4 text-primary" />
+                      ) : (
+                        <Package className="h-4 w-4 text-muted-foreground" />
+                      )}
+                      {product.name}
+                    </div>
+                  </TableCell>
                   <TableCell>
-                    {product.in_stock ? "In Stock" : "Out of Stock"}
+                    <Badge variant="secondary">
+                      {PRODUCT_TYPE_LABELS[product.product_type] || product.product_type}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>{product.is_coffee ? product.origin : "-"}</TableCell>
+                  <TableCell>Rp {product.price.toLocaleString()}</TableCell>
+                  <TableCell>
+                    <Badge variant={product.in_stock ? "default" : "destructive"}>
+                      {product.in_stock ? "In Stock" : "Out of Stock"}
+                    </Badge>
                   </TableCell>
                   <TableCell>
                     <div className="flex gap-2">
