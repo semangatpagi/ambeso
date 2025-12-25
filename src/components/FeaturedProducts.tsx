@@ -52,7 +52,7 @@ const FeaturedProducts = () => {
         <div className="grid md:grid-cols-3 gap-8">
           {products.map((product, index) => (
             <Link
-              to={`/store`}
+              to="/collection"
               key={index}
               className="group glass rounded-3xl overflow-hidden hover:scale-[1.02] transition-all duration-500 animate-fade-in-up cursor-pointer"
               style={{ animationDelay: `${index * 0.1}s` }}

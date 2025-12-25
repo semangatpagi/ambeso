@@ -58,7 +58,7 @@ const Navigation = () => {
   };
 
   const navLinks = [
-    { label: "Store", href: "/store", isRoute: true },
+    { label: "Collection", href: "/collection", isRoute: true },
     { label: "About", href: "/about", isRoute: true },
     { label: "Blog", href: "/blog", isRoute: true },
     { label: "Projects", href: "#projects", isRoute: false },
