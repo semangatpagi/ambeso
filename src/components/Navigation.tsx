@@ -65,6 +65,8 @@ const Navigation = () => {
     { label: "Charity", href: "#charity", isRoute: false },
   ];
 
+  const storeButton = { label: "Store", href: "/store" };
+
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
@@ -98,6 +100,12 @@ const Navigation = () => {
               </a>
             )
           )}
+          <Link
+            to={storeButton.href}
+            className="px-5 py-2 rounded-full bg-accent text-accent-foreground text-sm font-semibold hover:bg-accent/90 transition-colors"
+          >
+            {storeButton.label}
+          </Link>
         </div>
 
         {/* Right Actions */}
@@ -167,6 +175,13 @@ const Navigation = () => {
                 </a>
               )
             )}
+            <Link
+              to={storeButton.href}
+              className="px-5 py-2.5 rounded-full bg-accent text-accent-foreground text-base font-semibold text-center hover:bg-accent/90 transition-colors"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              {storeButton.label}
+            </Link>
           </div>
         </div>
       )}
