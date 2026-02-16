@@ -8,6 +8,8 @@ import Index from "./pages/Index";
 import Collection from "./pages/Collection";
 import CollectionDetail from "./pages/CollectionDetail";
 import Checkout from "./pages/Checkout";
+import CheckoutSuccess from "./pages/CheckoutSuccess";
+import CheckoutFailed from "./pages/CheckoutFailed";
 import About from "./pages/About";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
@@ -30,6 +32,8 @@ const App = () => (
             <Route path="/collection" element={<Collection />} />
             <Route path="/collection/:slug" element={<CollectionDetail />} />
             <Route path="/checkout" element={<Checkout />} />
+            <Route path="/checkout/success" element={<CheckoutSuccess />} />
+            <Route path="/checkout/failed" element={<CheckoutFailed />} />
             <Route path="/about" element={<About />} />
             <Route path="/blog" element={<Blog />} />
             <Route path="/blog/:slug" element={<BlogPost />} />
