@@ -3,50 +3,69 @@ import { useNavigate } from 'react-router-dom';
 import { useCart } from '@/contexts/CartContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
+import ShippingForm, { ShippingFormData } from '@/components/checkout/ShippingForm';
+import ShippingOptions, { SelectedShipping } from '@/components/checkout/ShippingOptions';
 import { ShoppingBag, Truck, CreditCard, Minus, Plus, Trash2, ArrowLeft, Shield, Loader2 } from 'lucide-react';
+
+const formatPrice = (price: number) =>
+  new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(price);
 
 export default function Checkout() {
   const { items, totalPrice, clearCart, updateQuantity, removeItem } = useCart();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [step, setStep] = useState<'cart' | 'shipping' | 'payment'>('cart');
+  const [selectedShipping, setSelectedShipping] = useState<SelectedShipping | null>(null);
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<ShippingFormData>({
     name: '',
     email: '',
     phone: '',
+    provinceId: '',
+    provinceName: '',
+    cityId: '',
+    cityName: '',
+    districtId: '',
+    districtName: '',
+    kelurahan: '',
     address: '',
-    city: '',
     postalCode: '',
     notes: '',
   });
 
-  const formatPrice = (price: number) =>
-    new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(price);
+  const totalWeight = items.reduce((sum, item) => sum + (item.weight_g || 200) * item.quantity, 0);
+  const shippingCost = selectedShipping?.cost || 0;
+  const grandTotal = totalPrice + shippingCost;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (items.length === 0) return;
+    if (items.length === 0 || !selectedShipping) return;
 
     setLoading(true);
 
     try {
+      const fullAddress = [
+        formData.address,
+        `Kel. ${formData.kelurahan}`,
+        `Kec. ${formData.districtName}`,
+        formData.cityName,
+        formData.provinceName,
+        formData.postalCode ? `Kode Pos ${formData.postalCode}` : '',
+      ].filter(Boolean).join(', ');
+
       const { data: order, error: orderError } = await supabase
         .from('orders')
         .insert({
           customer_name: formData.name,
           customer_email: formData.email,
           customer_phone: formData.phone,
-          shipping_address: formData.address,
-          shipping_city: formData.city,
-          shipping_postal_code: formData.postalCode,
-          total_amount: totalPrice,
+          shipping_address: fullAddress,
+          shipping_city: formData.cityName,
+          shipping_postal_code: formData.postalCode || '-',
+          total_amount: grandTotal,
           status: 'pending',
         })
         .select()
@@ -69,21 +88,27 @@ export default function Checkout() {
 
       if (itemsError) throw itemsError;
 
-      // Create Xendit invoice
       const { data: invoiceData, error: invoiceError } = await supabase.functions.invoke(
         'create-xendit-invoice',
         {
           body: {
             orderId: order.id,
-            amount: totalPrice,
+            amount: grandTotal,
             customerName: formData.name,
             customerEmail: formData.email,
             customerPhone: formData.phone,
-            items: items.map(item => ({
-              name: item.name,
-              quantity: item.quantity,
-              price: item.price,
-            })),
+            items: [
+              ...items.map(item => ({
+                name: item.name,
+                quantity: item.quantity,
+                price: item.price,
+              })),
+              {
+                name: `Ongkir ${selectedShipping.courier.toUpperCase()} ${selectedShipping.description}`,
+                quantity: 1,
+                price: shippingCost,
+              },
+            ],
           },
         }
       );
@@ -92,11 +117,10 @@ export default function Checkout() {
 
       clearCart();
 
-      // Redirect to Xendit payment page
       if (invoiceData?.invoice_url) {
         window.location.href = invoiceData.invoice_url;
       } else {
-        toast.success('Order berhasil dibuat! Kami akan menghubungi Anda.');
+        toast.success('Order berhasil dibuat!');
         navigate('/');
       }
     } catch (error: any) {
@@ -157,9 +181,7 @@ export default function Checkout() {
                   <s.icon className="h-4 w-4" />
                   {s.label}
                 </button>
-                {i < steps.length - 1 && (
-                  <div className="w-8 h-px bg-border" />
-                )}
+                {i < steps.length - 1 && <div className="w-8 h-px bg-border" />}
               </div>
             ))}
           </div>
@@ -217,44 +239,27 @@ export default function Checkout() {
                     <ArrowLeft className="h-4 w-4" /> Kembali
                   </button>
                   <h2 className="text-2xl font-bold">Informasi Pengiriman</h2>
-                  <div className="glass rounded-2xl p-6 space-y-5">
-                    <div className="grid sm:grid-cols-2 gap-4">
-                      <div>
-                        <Label htmlFor="name">Nama Lengkap *</Label>
-                        <Input id="name" required value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} className="bg-muted/50 border-border mt-1.5" />
-                      </div>
-                      <div>
-                        <Label htmlFor="phone">No. Telepon *</Label>
-                        <Input id="phone" type="tel" required value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: e.target.value })} className="bg-muted/50 border-border mt-1.5" />
-                      </div>
-                    </div>
-                    <div>
-                      <Label htmlFor="email">Email *</Label>
-                      <Input id="email" type="email" required value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} className="bg-muted/50 border-border mt-1.5" />
-                    </div>
-                    <div>
-                      <Label htmlFor="address">Alamat Lengkap *</Label>
-                      <Textarea id="address" required value={formData.address} onChange={(e) => setFormData({ ...formData, address: e.target.value })} className="bg-muted/50 border-border mt-1.5" rows={3} />
-                    </div>
-                    <div className="grid sm:grid-cols-2 gap-4">
-                      <div>
-                        <Label htmlFor="city">Kota *</Label>
-                        <Input id="city" required value={formData.city} onChange={(e) => setFormData({ ...formData, city: e.target.value })} className="bg-muted/50 border-border mt-1.5" />
-                      </div>
-                      <div>
-                        <Label htmlFor="postalCode">Kode Pos *</Label>
-                        <Input id="postalCode" required value={formData.postalCode} onChange={(e) => setFormData({ ...formData, postalCode: e.target.value })} className="bg-muted/50 border-border mt-1.5" />
-                      </div>
-                    </div>
-                    <div>
-                      <Label htmlFor="notes">Catatan (opsional)</Label>
-                      <Textarea id="notes" value={formData.notes} onChange={(e) => setFormData({ ...formData, notes: e.target.value })} className="bg-muted/50 border-border mt-1.5" rows={2} placeholder="Catatan untuk kurir atau pesanan..." />
-                    </div>
-                  </div>
+
+                  <ShippingForm formData={formData} onChange={setFormData} />
+
+                  {/* Shipping Options */}
+                  {formData.districtId && (
+                    <ShippingOptions
+                      districtId={formData.districtId}
+                      weightGrams={totalWeight}
+                      selected={selectedShipping}
+                      onSelect={setSelectedShipping}
+                    />
+                  )}
+
                   <Button
                     onClick={() => {
-                      if (!formData.name || !formData.email || !formData.phone || !formData.address || !formData.city || !formData.postalCode) {
+                      if (!formData.name || !formData.email || !formData.phone || !formData.provinceId || !formData.cityId || !formData.districtId || !formData.kelurahan || !formData.address) {
                         toast.error('Mohon lengkapi semua field yang wajib diisi');
+                        return;
+                      }
+                      if (!selectedShipping) {
+                        toast.error('Pilih layanan pengiriman terlebih dahulu');
                         return;
                       }
                       setStep('payment');
@@ -286,9 +291,6 @@ export default function Checkout() {
                         <span>• QRIS</span>
                       </div>
                     </div>
-                    <p className="text-xs text-muted-foreground">
-                      Setelah klik "Bayar Sekarang", Anda akan diarahkan ke halaman pembayaran Xendit untuk menyelesaikan transaksi.
-                    </p>
                   </div>
                   <Button
                     type="submit"
@@ -298,7 +300,7 @@ export default function Checkout() {
                     {loading ? (
                       <><Loader2 className="h-5 w-5 mr-2 animate-spin" /> Memproses...</>
                     ) : (
-                      <>Bayar Sekarang — {formatPrice(totalPrice)}</>
+                      <>Bayar Sekarang — {formatPrice(grandTotal)}</>
                     )}
                   </Button>
                 </form>
@@ -326,11 +328,20 @@ export default function Checkout() {
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Ongkir</span>
-                    <span className="text-accent text-xs">Dihitung saat checkout</span>
+                    {selectedShipping ? (
+                      <span>{formatPrice(shippingCost)}</span>
+                    ) : (
+                      <span className="text-xs text-muted-foreground italic">Pilih kurir dulu</span>
+                    )}
                   </div>
+                  {selectedShipping && (
+                    <div className="text-xs text-muted-foreground">
+                      {selectedShipping.courier.toUpperCase()} {selectedShipping.description} (est. {selectedShipping.etd} hari)
+                    </div>
+                  )}
                   <div className="border-t border-border pt-3 flex justify-between text-lg font-bold">
                     <span>Total</span>
-                    <span className="text-accent">{formatPrice(totalPrice)}</span>
+                    <span className="text-accent">{formatPrice(grandTotal)}</span>
                   </div>
                 </div>
               </div>

@@ -1,1 +1,7 @@
 project_id = "bpxskamvjwvxcezvvjgt"
+
+[functions.rajaongkir]
+verify_jwt = false
+
+[functions.create-xendit-invoice]
+verify_jwt = false
