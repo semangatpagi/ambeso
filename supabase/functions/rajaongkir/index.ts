@@ -53,6 +53,19 @@ serve(async (req) => {
       );
     }
 
+    if (action === "subdistricts") {
+      const { district_id } = body;
+      const res = await fetch(
+        `${BASE_URL}/destination/domestic-destination?search=${district_id}&limit=50&offset=0`,
+        { headers: apiHeaders }
+      );
+      const data = await res.json();
+      return new Response(
+        JSON.stringify(data.data || []),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     if (action === "cost") {
       const { origin, destination, weight, courier } = body;
       if (!destination || !weight || !courier) {
@@ -62,18 +75,19 @@ serve(async (req) => {
       // Origin default: Panakkukang, Makassar district_id
       const originId = origin || "6736";
 
+      const formBody = new URLSearchParams();
+      formBody.append("origin", String(originId));
+      formBody.append("destination", String(destination));
+      formBody.append("weight", String(weight));
+      formBody.append("courier", courier);
+
       const res = await fetch(`${BASE_URL}/calculate/domestic-cost`, {
         method: "POST",
         headers: {
           ...apiHeaders,
-          "Content-Type": "application/json",
+          "Content-Type": "application/x-www-form-urlencoded",
         },
-        body: JSON.stringify({
-          origin: Number(originId),
-          destination: Number(destination),
-          weight: Number(weight),
-          courier,
-        }),
+        body: formBody.toString(),
       });
 
       const data = await res.json();
