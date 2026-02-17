@@ -1,16 +1,13 @@
 import { useState, useEffect } from 'react';
 import { Loader2, Truck } from 'lucide-react';
 
-interface CostService {
+interface CostItem {
+  name: string;
+  code: string;
   service: string;
   description: string;
-  cost: { value: number; etd: string; note: string }[];
-}
-
-interface CourierResult {
-  code: string;
-  name: string;
-  costs: CostService[];
+  cost: number;
+  etd: string;
 }
 
 export interface SelectedShipping {
@@ -46,7 +43,7 @@ const formatPrice = (price: number) =>
   new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(price);
 
 export default function ShippingOptions({ districtId, weightGrams, selected, onSelect }: ShippingOptionsProps) {
-  const [results, setResults] = useState<CourierResult[]>([]);
+  const [results, setResults] = useState<CostItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -62,7 +59,7 @@ export default function ShippingOptions({ districtId, weightGrams, selected, onS
 
     try {
       const couriers = ['jne', 'tiki'];
-      const allResults: CourierResult[] = [];
+      const allResults: CostItem[] = [];
 
       for (const courier of couriers) {
         const res = await fetch(
@@ -113,24 +110,20 @@ export default function ShippingOptions({ districtId, weightGrams, selected, onS
   if (results.length === 0) return null;
 
   const options: (SelectedShipping & { key: string })[] = [];
-  for (const courier of results) {
-    const code = courier.code.toLowerCase();
+  for (const item of results) {
+    const code = (item.code || '').toLowerCase();
     const allowed = ALLOWED_SERVICES[code] || [];
-    for (const svc of courier.costs) {
-      if (allowed.includes(svc.service)) {
-        const costData = svc.cost[0];
-        if (costData) {
-          options.push({
-            key: `${code}-${svc.service}`,
-            courier: code,
-            courierName: courier.name,
-            service: svc.service,
-            description: SERVICE_LABELS[svc.service] || svc.description,
-            cost: costData.value,
-            etd: costData.etd,
-          });
-        }
-      }
+    const service = item.service || '';
+    if (allowed.includes(service)) {
+      options.push({
+        key: `${code}-${service}`,
+        courier: code,
+        courierName: item.name || code.toUpperCase(),
+        service,
+        description: SERVICE_LABELS[service] || item.description || service,
+        cost: item.cost || 0,
+        etd: (item.etd || '').replace(' day', ''),
+      });
     }
   }
 
